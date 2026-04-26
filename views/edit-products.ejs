@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit product</title>
+    <style>
+        .parent{
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="parent">
+        <div class="child">
+            <form action="/edit-product" method="post">
+                <h2>Edit product</h2>
+                <input type="hidden" name="productId" value="<%= product.id %>">
+                <p>
+                    <label for="productName">Product Name</label><br>
+                    <input type="text" name="product_name" id="productName" value="<%= product.title %>">
+                </p>
+                <p>
+                    <label for="category"></label>
+                    <select name="category" id="category">
+                        <%
+                            categories.forEach((c) =>{
+                                %>
+                                <option value="<%= c.name %>"><%= c.name %></option>
+                                <%
+                            })
+                        %>
+                        
+                    </select>
+                </p>
+                <p>
+                    <label for="price">Price</label><br>
+                    <input type="text" name="price" id="price" value="<%= product.price %>">
+                </p>
+                <p>
+                    <label for="image">Image</label><br>
+                    <input type="text" name="image" id="image" value="<%= product.image %>">
+                </p>
+                <p>
+                    <label for="description">Description</label><br>
+                    <textarea name="description" id="description"><%= product.description %></textarea>
+                </p>
+                <div class="save">
+                    <button type="submit">Save Changes</button>
+                    <button>Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

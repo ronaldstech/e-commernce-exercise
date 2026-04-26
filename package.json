@@ -1,0 +1,16 @@
+{
+  "name": "davie",
+  "version": "1.0.0",
+  "description": "e commerce website",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "jacob liwewe",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^5.0.2",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0"
+  }
+}

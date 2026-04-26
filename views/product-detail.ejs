@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product detail</title>
+    <style>
+        .parent {
+            display: flex;
+            align-items: center;       /* vertical center */
+            background-color: rgb(230, 222, 222);
+            padding: 3rem;
+            flex-direction: column;
+            min-height: 100vh;         /* full screen height */
+        }
+        .child {
+            background-color: white;
+            padding: 2rem;
+            width: 40%;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: row;
+            gap: 20px;                 /* spacing between image & details */
+            align-items: center;       /* vertical alignment inside card */
+        }
+        .vBtn{
+            text-decoration: none;
+            background-color: blue;
+            color: white;
+            width: 100%;
+            padding: 0.6rem;
+            border-radius: 6px;
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .aBtn{
+            text-decoration: none;
+            background-color: rgb(97, 97, 220);
+            color:  white;
+            width: 100%;
+            padding: 0.6rem;
+            border-radius: 6px;
+            display: block;
+            width: 100%;
+        }
+        .productDetail{
+            padding: 1rem 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="parent">
+        <div class="back">
+            <button>back to home</button>
+        </div>
+        <div class="child">
+            <div class="baby">
+                <img src="http://localhost:4000<%= product.image %>" alt="<%= product.title %>" width="200">
+            </div>
+            <div class="productDetail">
+                <h2><%= product.title %></h2>
+                <div>
+                    <p>
+                        Category<br>
+                        <%= product.categoryName %>
+                    </p>
+                </div>
+                <p>Price: <%= product.price %></p>
+                <div>
+                    <p>
+                        Description<br>
+                        <%= product.description %>
+                    </p>
+                </div>
+                <a href="/add-cart?id=<%= product.id %>" class="vBtn">Add to cart</a>
+                <a href="/edit-product?id=<%= product.id %>" class="aBtn">Edit Product</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

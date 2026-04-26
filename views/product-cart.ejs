@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products cart</title>
+    <style>
+        *{
+            box-sizing: border-box;
+        }
+        .parent{
+            display: flex;
+            justify-content: center;
+        }
+        .child{
+            width: 30%;
+        }
+    </style>
+</head>
+<body>
+    <div class="parent">
+        <div class="child">
+            <h2>Shopping Cart</h2>
+            <%
+            cart.forEach((c) =>{
+                %>
+                <h1><%= c.cartId %></h1>
+                <%
+            }) %>
+        </div>
+    </div>
+</body>
+</html>
