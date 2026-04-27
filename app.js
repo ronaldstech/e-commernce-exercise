@@ -22,6 +22,31 @@ const PORT = 5000;
 
 //configure middlewares
 app.set("view engine", "ejs");
+
+// add product with image before body parsers
+app.post("/add-product", async (req, res) => {
+    try {
+        const response = await fetch("http://localhost:4000/api/products", {
+            method: "POST",
+            headers: {
+                "content-type": req.headers["content-type"]
+            },
+            body: req,
+            duplex: "half"
+        });
+
+        if (response.ok) {
+            return res.redirect("/home");
+        } else {
+            return res.redirect("/home");
+        }
+
+    } catch (e) {
+        console.log(e);
+        res.redirect("/home");
+    }
+});
+
 app.use(express.urlencoded({extended:true}));
 app.use(express.json());
 
@@ -230,7 +255,11 @@ app.get("/orders", async (req, res) => {
             }))
         }));
 
-        res.render("orders", { orders: enrichedOrders, user: req.session.user });
+        const total = orders.reduce((sum, o)=> {
+            return sum + (o.total || 0);
+        }, 0);
+
+        res.render("orders", { orders: enrichedOrders, user: req.session.user, total});
 
     } catch (e) {
         console.log(e);
@@ -360,7 +389,15 @@ app.post("/edit-product", async (req, res) =>{
         res.redirect("/home");
     }
     
-})
+});
+
+//add new product
+app.get("/add-product", async (req, res) =>{
+    const catResponse = await fetch("http://localhost:4000/api/categories");
+    const categories = await catResponse.json();
+
+    res.render("add-product", {categories});
+});
 
 app.listen(PORT, () => {
     console.log("Server started");

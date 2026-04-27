@@ -40,6 +40,16 @@
             color:blue;
             font-weight:bold;
         }
+        .totals{
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem;
+            background-color: white;
+            border-radius: 10px 15px;
+        }
+        .figure span{
+            color: blue;
+        }
     </style>
 </head>
 <body>
@@ -74,6 +84,15 @@
             </tbody>
         </table>
     <% } %>
+
+    <div class="totals">
+        <div class="totalOrders">
+            <h3>Total Orders: <%= orders.length %></h3>
+        </div>
+        <div class="figure">
+            <h3>Total Revenue: <span>$ <%= total %></span></h3>
+        </div>
+    </div>
 
 </div>
 

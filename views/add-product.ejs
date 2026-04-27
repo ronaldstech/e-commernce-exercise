@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add product</title>
+    <style>
+        .parent{
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="parent">
+        <div class="child">
+            <form action="/add-product" method="post" enctype="multipart/form-data">
+                <h2>Edit product</h2>
+                <p>
+                    <label for="productName">Product Name</label><br>
+                    <input type="text" name="title" id="productName">
+                </p>
+                <p>
+                    <label for="category"></label>
+                    <select name="categoryId" id="category">
+                        <%
+                            categories.forEach((c) =>{
+                                %>
+                                <option value="<%= c.id %>"><%= c.name %></option>
+                                <%
+                            })
+                        %>
+                        
+                    </select>
+                </p>
+                <p>
+                    <label for="price">Price</label><br>
+                    <input type="text" name="price" id="price">
+                </p>
+                <p>
+                    <label for="description">Description</label><br>
+                    <textarea name="description" id="description"></textarea>
+                </p>
+                <p>
+                    <label for="productImage">Product Image</label><br>
+                    <input type="file" name="image" id="productImage">
+                </p>
+                <div class="save">
+                    <button type="submit">Add Product</button>
+                    <button>Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
