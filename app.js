@@ -187,6 +187,16 @@ app.get("/checkout", async (req, res) => {
 });
 
 //orders
+const fetchOrderItems = async (orders) => {
+    // For each order, fetch its items
+    const ordersWithItems = await Promise.all(orders.map(async (order) => {
+        const itemsRes = await fetch(`http://localhost:4000/api/orders/${order.id}/items`);
+        const items = itemsRes.ok ? await itemsRes.json() : [];
+        return { ...order, items };
+    }));
+    return ordersWithItems;
+};
+
 app.get("/orders", async (req, res) => {
     if (!req.session.user) {
         return res.redirect("/login");
@@ -199,7 +209,10 @@ app.get("/orders", async (req, res) => {
         const response = await fetch(`http://localhost:4000/api/orders/user/${userId}`);
         const orders = await response.json();
 
-        // 2. Fetch products (for enrichment)
+        // 2. Fetch items for each order
+        const ordersWithItems = await fetchOrderItems(orders);
+
+        // 3. Fetch products (for enrichment)
         const productRes = await fetch("http://localhost:4000/api/products");
         const products = await productRes.json();
 
@@ -208,8 +221,8 @@ app.get("/orders", async (req, res) => {
             productMap[p.id] = p;
         });
 
-        // 3. Enrich order items with product data
-        const enrichedOrders = orders.map(order => ({
+        // 4. Enrich order items with product data
+        const enrichedOrders = ordersWithItems.map(order => ({
             ...order,
             items: order.items.map(item => ({
                 ...item,
@@ -217,7 +230,7 @@ app.get("/orders", async (req, res) => {
             }))
         }));
 
-        res.render("orders", { orders: enrichedOrders });
+        res.render("orders", { orders: enrichedOrders, user: req.session.user });
 
     } catch (e) {
         console.log(e);
