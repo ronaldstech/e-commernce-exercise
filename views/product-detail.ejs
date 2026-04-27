@@ -5,23 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product detail</title>
     <style>
+        body{
+            background-color: rgb(230, 222, 222);
+        }
         .parent {
             display: flex;
-            align-items: center;       /* vertical center */
-            background-color: rgb(230, 222, 222);
+            justify-content: center;   
             padding: 3rem;
-            flex-direction: column;
-            min-height: 100vh;         /* full screen height */
         }
         .child {
-            background-color: white;
-            padding: 2rem;
-            width: 40%;
-            border-radius: 10px;
+           
             display: flex;
             flex-direction: row;
-            gap: 20px;                 /* spacing between image & details */
-            align-items: center;       /* vertical alignment inside card */
+            gap: 20px;                 
+            align-items: center;
+        }
+        .child2{
+            background-color: white;
+            width: 40%;
+            border-radius: 10px;
+             padding: 2rem;
         }
         .vBtn{
             text-decoration: none;
@@ -33,6 +36,7 @@
             display: block;
             width: 100%;
             margin-bottom: 10px;
+            text-align: center;
         }
         .aBtn{
             text-decoration: none;
@@ -43,38 +47,50 @@
             border-radius: 6px;
             display: block;
             width: 100%;
+            text-align: center;
         }
         .productDetail{
             padding: 1rem 2rem;
+            width: 60%;
+        }
+        .child2 .back{
+            text-decoration: none;
+            color: blue;
+        }
+        .baby{
+            width: 40%;
         }
     </style>
 </head>
 <body>
     <div class="parent">
-        <div class="back">
-            <button>back to home</button>
-        </div>
-        <div class="child">
-            <div class="baby">
-                <img src="http://localhost:4000<%= product.image %>" alt="<%= product.title %>" width="200">
+        
+        <div class="child2">
+            <div class="back">
+                <a href="/home" class="back">Back to home</a>
             </div>
-            <div class="productDetail">
-                <h2><%= product.title %></h2>
-                <div>
-                    <p>
-                        Category<br>
-                        <%= product.categoryName %>
-                    </p>
+            <div class="child">
+                <div class="baby">
+                    <img src="http://localhost:4000<%= product.image %>" alt="<%= product.title %>" width="200">
                 </div>
-                <p>Price: <%= product.price %></p>
-                <div>
-                    <p>
-                        Description<br>
-                        <%= product.description %>
-                    </p>
+                <div class="productDetail">
+                    <h2><%= product.title %></h2>
+                    <div>
+                        <p>
+                            <b>Category</b><br>
+                            <%= product.categoryName %>
+                        </p>
+                    </div>
+                    <p><b>Price:</b> <%= product.price %></p>
+                    <div>
+                        <p>
+                            <b>Description</b><br>
+                            <%= product.description %>
+                        </p>
+                    </div>
+                    <a href="/add-cart?id=<%= product.id %>" class="vBtn">Add to cart</a>
+                    <a href="/edit-product?id=<%= product.id %>" class="aBtn">Edit Product</a>
                 </div>
-                <a href="/add-cart?id=<%= product.id %>" class="vBtn">Add to cart</a>
-                <a href="/edit-product?id=<%= product.id %>" class="aBtn">Edit Product</a>
             </div>
         </div>
     </div>

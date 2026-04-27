@@ -34,6 +34,7 @@
             background-color: white;
             padding: 1rem;
             border-radius: 15px;
+            margin-top: 10px;
         }
         img{
             width: 100%;
@@ -91,12 +92,17 @@
         .total .amount{
             color: blue;
         }
+        .child .back{
+            text-decoration: none;
+            color: blue;
+        }
     </style>
 </head>
 <body>
     <div class="parent">
         <div class="child">
             <h2>Shopping Cart</h2>
+            <a href="/home" class="back">Back to Home</a>
             <div class="items">
                 <% if (enrichedCart.length === 0) { %>
                     <div style="text-align:center; padding:2rem;">

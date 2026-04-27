@@ -57,22 +57,43 @@ app.get("/login", (req, res) =>{
 
 //rendering home
 app.get("/home", async (req, res) => {
-    if(!req.session.user){
+    if (!req.session.user) {
         return res.redirect("/login");
     }
-    try{
-        const response = await fetch("http://localhost:4000/api/categories");
-        const proResponse = await fetch("http://localhost:4000/api/products");
 
-        const products = await proResponse.json();
-        const categories = await response.json();
+    try {
+        const categoryId = req.query.categoryId;
 
-        res.render("home", {categories, products, user: req.session.user});
+        const [catRes, prodRes] = await Promise.all([
+            fetch("http://localhost:4000/api/categories"),
+            fetch("http://localhost:4000/api/products")
+        ]);
+
+        const categories = await catRes.json();
+        let products = await prodRes.json();
+
+        // ✅ only filter if categoryId exists
+        if (categoryId && categoryId !== "all") {
+            products = products.filter(p => p.categoryId == categoryId);
+        }
+
+        res.render("home", {
+            categories,
+            products,
+            user: req.session.user,
+            selectedCategory: categoryId || "all"
+        });
+
+    } catch (e) {
+        console.log(e);
+        res.render("home", {
+            categories: [],
+            products: [],
+            user: req.session.user,
+            selectedCategory: "all"
+        });
     }
-    catch(e){
-        res.render("home", {categories: [], products: [], error: "failed to fetch categories"});
-    }
-})
+});
 
 //adding item to cart
 app.get("/add-cart", async (req, res) =>{

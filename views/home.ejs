@@ -4,95 +4,235 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
+
     <style>
-        .sideBar{
-            position: fixed;
-            margin: 0;
-            height: 100vh;
-            border: 1px solid grey;
-            width: 20%;
-            padding: 1rem;
-        }
         *{
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
         }
-        .mainContent{
-            border: 1px solid grey;
-            margin-left: 300px;
+
+        body{
+            background-color: #f5f6fa;
         }
-        .catBtn{
-            display: block;
-            padding: 0.8rem;
-            text-decoration: none;
-            background-color: blue;
-            color: white;
-            margin-bottom: 4px;
-            border-radius: 6px;
-        }
-        .cards{
+
+        .container{
             display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
-            padding: 16px;
         }
-        .card{
-            flex: 0 0 220px;
-            padding: 12px;
-            border: 1px solid rgb(230, 224, 224);
+
+        .sideBar{
+            position: fixed;
+            width: 240px;
+            height: 100vh;
+            background: white;
+            padding: 1rem;
+            border-right: 1px solid #ddd;
         }
-        .vBtn{
-            text-decoration: none;
-            background-color: blue;
-            color: white;
+
+        .mainContent{
+            margin-left: 240px;
             width: 100%;
-            padding: 0.6rem;
-            border-radius: 6px;
+            padding: 20px;
         }
-        .cartBtn{
-            padding: 0.8rem;
-            color: green;
-            border: 1px solid green;
-            border-radius: 6px;
+
+        .sideBar h2{
+            margin-bottom: 15px;
+        }
+
+        .catBtn, .linkBtn{
             display: block;
-            width: 100%;
+            padding: 10px;
+            margin-bottom: 6px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
         }
+
+        .catBtn{
+            background: #ffffff;
+            color: rgb(0, 42, 255);
+        }
+
+        .catBtn:hover{
+            background: #4aa1ff;
+            color: white;
+        }
+
+        .linkBtn{
+            border: 1px solid #ccc;
+            color: #333;
+        }
+
+        .linkBtn:hover{
+            background: #eee;
+        }
+
+        .cartBtn{
+            border: 1px solid green;
+            color: green;
+        }
+
+        .cartBtn:hover{
+            border: 1px solid green;
+            color: rgb(255, 255, 255);
+            background-color: green;
+        }
+
+        .ordersBtn{
+            border: 1px solid blue;
+            color: blue;
+        }
+
+        .ordersBtn:hover{
+            border: 1px solid blue;
+            color: rgb(255, 255, 255);
+            background-color: blue;
+        }
+
+        .logoutBtn{
+            margin-top: 10px;
+            border: 1px solid red;
+            color: red;
+        }
+
+        .logoutBtn:hover{
+            background: red;
+            color: white;
+        }
+
+        .header{
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .userInfo{
+            font-size: 14px;
+            color: #555;
+        }
+
+        .cards{
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .card{
+            background: white;
+            border-radius: 12px;
+            padding: 12px;
+            border: 1px solid #eee;
+            transition: 0.2s;
+        }
+
+        .card:hover{
+            border: 1px solid blue;
+            cursor: pointer;
+        }
+
+        .card img{
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .title{
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .price{
+            color: #007bff;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .vBtn{
+            display: block;
+            text-align: center;
+            background: #007bff;
+            color: white;
+            padding: 8px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .vBtn:hover{
+            background: #0056b3;
+        }
+
+        .activeCat{
+            background: #007bff;
+            color: white;
+        }
+
     </style>
 </head>
+
 <body>
-    <div class="container">
-        <div class="sideBar">
-            <h2>Categories</h2>
-            <a href="#">All Products</a>
-            <%
-                categories.forEach((c)=> {
-                    %>
-                    <a href="#" class="catBtn"><%= c.name %></a>
-                    <%
-                })
-            %>
-            <a href="/product-cart" class="cartBtn">Cart</a>
-            <a href="/orders" class="cartBtn" style="margin-top:8px; color:blue; border-color:blue;">View Orders</a>
-            <a href="/add-product">Add new product</a>
-            <a href="/logout" class="logoutBtn" >
-                Logout
+
+<div class="container">
+
+    <div class="sideBar">
+        <h2>Categories</h2>
+
+        <a href="/home" class="linkBtn">All Products</a>
+
+        <% categories.forEach((c)=> { %>
+            <a 
+                href="/home?categoryId=<%= c.id %>" 
+                class="catBtn <%= selectedCategory == c.id ? 'activeCat' : '' %>""
+            >
+                <%= c.name %>
             </a>
-        </div>
-        <div class="mainContent">
-            <div class="cards">
-                <%
-                products.forEach((p) => {
-                    %>
-                        <div class="card">
-                            <img src="http://localhost:4000<%=p.image %>" alt="<%= p.title %>" width="100"><br>
-                            <p><%= p.title %></p>
-                            <p><%= p.price %></p>
-                            <a href="/product-detail?id=<%= p.id %>" class="vBtn">View Details</a>
-                        </div>
-                    <%
-                })%>
-            </div>
-            <%= user.username %> <%= user.email %> <%= user.id %>
-        </div>
+        <% }) %>
+
+        <hr style="margin:10px 0;">
+
+        <a href="/product-cart" class="linkBtn cartBtn">Cart</a>
+        <a href="/orders" class="linkBtn ordersBtn">View Orders</a>
+        <a href="/add-product" class="linkBtn">Add Product</a>
+
+        <a href="/logout" class="linkBtn logoutBtn">Logout</a>
     </div>
+
+    <div class="mainContent">
+
+        <div class="header">
+            <h2>Products</h2>
+            <div class="userInfo">
+                <strong><%= user.username %></strong> | <%= user.email %>
+            </div>
+        </div>
+
+        <div class="cards">
+            <% products.forEach((p) => { %>
+                <div class="card">
+                    <img src="http://localhost:4000<%= p.image %>" alt="<%= p.title %>">
+
+                    <div class="title"><%= p.title %></div>
+
+                    <div class="price">$ <%= Number(p.price).toFixed(2) %></div>
+
+                    <a href="/product-detail?id=<%= p.id %>" class="vBtn">
+                        View Details
+                    </a>
+                </div>
+            <% }) %>
+        </div>
+
+    </div>
+
+</div>
+
 </body>
 </html>
