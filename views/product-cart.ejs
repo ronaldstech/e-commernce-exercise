@@ -98,10 +98,14 @@
         <div class="child">
             <h2>Shopping Cart</h2>
             <div class="items">
-                 <%
-                    enrichedCart.forEach((c) =>{
-                        if(c.product){
-                        %>
+                <% if (enrichedCart.length === 0) { %>
+                    <div style="text-align:center; padding:2rem;">
+                        <h3>Your cart is empty.</h3>
+                        <a href="/" class="place" style="width:auto; display:inline-block; margin-top:1rem;">Back to Home</a>
+                    </div>
+                <% } else { %>
+                    <% enrichedCart.forEach((c) => {
+                        if (c.product) { %>
                             <div class="c-item">
                                 <div class="image">                               
                                     <img src="http://localhost:4000<%= c.product.image %>" alt="<%= c.title %>">
@@ -113,29 +117,30 @@
                                 </div>
                                 <div class="action">
                                     <div class="quantity">
-                                        <a href="#" class="q">-</a>
-                                        <a href="#" class="q">1</a>
-                                        <a href="/increase-qty?cartItemId=<%= c.cartItemId %>" class="q">+</a>
+                                        <a href="/decrease-qty?cartItemId=<%= c.cartItemId %>&qty=<%= c.quantity %>" class="q">-</a>
+                                        <a href="#" class="q"><%= c.quantity %></a>
+                                        <a href="/increase-qty?cartItemId=<%= c.cartItemId %>&qty=<%= c.quantity %>" class="q">+</a>
                                     </div>
                                     <div class="delete">
                                         <a href="/remove-item?cartItemId=<%= c.cartItemId %>" class="remove"><i class="fa-solid fa-trash"></i></a>
                                     </div>
                                 </div>
                             </div>
-                        <%
-                        }
-                    }) 
-                %>
+                        <% }
+                    }) %>
+                <% } %>
             </div>
-            <div class="order">
-                <div class="total">
-                    <h2>Total</h2>
-                    <h2 class="amount">$300</h2>
+            <% if (enrichedCart.length > 0) { %>
+                <div class="order">
+                    <div class="total">
+                        <h2>Total</h2>
+                        <h2 class="amount">$<%= total.toFixed(2) %></h2>
+                    </div>
+                    <div>
+                        <a href="/checkout" class="place">Place Order</a>
+                    </div>
                 </div>
-                <div>
-                    <a href="#" class="place">Place Order</a>
-                </div>
-            </div>
+            <% } %>
         </div>
     </div>
 </body>

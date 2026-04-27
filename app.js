@@ -144,50 +144,162 @@ app.get("/product-cart", async(req, res) =>{
             ...item, product: productMap[item.productId] || null
         }))
 
+        const total = enrichedCart.reduce((sum, item) => {
+            if (!item.product) return sum;
 
-        res.render("product-cart", {enrichedCart});
+            const price = parseFloat(item.price);
+            const qty = item.quantity;
+
+            return sum + (price * qty);
+        }, 0);
+
+        res.render("product-cart", {enrichedCart, total});
     }
     catch(e){
         console.log(e);
     }
 })
+
+//checkout
+app.get("/checkout", async (req, res) => {
+    if (!req.session.user) {
+        return res.redirect("/login");
+    }
+
+    const userId = req.session.user.id;
+
+    try {
+        const response = await fetch(`http://localhost:4000/api/orders/checkout/${userId}`, {
+            method: "POST"
+        });
+
+        if (response.ok) {
+            // optional: clear cart or redirect
+            return res.redirect("/orders");
+        } else {
+            console.log("Checkout failed");
+            return res.redirect("/product-cart");
+        }
+    } catch (e) {
+        console.log(e);
+        res.redirect("/product-cart");
+    }
+});
+
+//orders
+app.get("/orders", async (req, res) => {
+    if (!req.session.user) {
+        return res.redirect("/login");
+    }
+
+    const userId = req.session.user.id;
+
+    try {
+        // 1. Fetch orders
+        const response = await fetch(`http://localhost:4000/api/orders/user/${userId}`);
+        const orders = await response.json();
+
+        // 2. Fetch products (for enrichment)
+        const productRes = await fetch("http://localhost:4000/api/products");
+        const products = await productRes.json();
+
+        const productMap = {};
+        products.forEach(p => {
+            productMap[p.id] = p;
+        });
+
+        // 3. Enrich order items with product data
+        const enrichedOrders = orders.map(order => ({
+            ...order,
+            items: order.items.map(item => ({
+                ...item,
+                product: productMap[item.productId] || null
+            }))
+        }));
+
+        res.render("orders", { orders: enrichedOrders });
+
+    } catch (e) {
+        console.log(e);
+        res.render("orders", { orders: [] });
+    }
+});
 
 //removing item from cartId
 app.get("/remove-item", async (req, res) =>{
     const cartItemId = req.query.cartItemId;
 
     try{
-        const response = await fetch(`http://localhost:4000/api/cart/item/${cartItemId}`);
-        const data = await response.json();
+        const response = await fetch(`http://localhost:4000/api/cart/item/${cartItemId}`, {
+            method: "DELETE"
+        });
+
         if(response.ok){
-            res.redirect("product-cart");
+            return res.redirect("/product-cart");
         }
     }
     catch(e){
         console.log(e);
+        res.redirect("/product-cart");
     }
 });
 
 //increamenting quantity
 app.get("/increase-qty", async (req, res) => {
     const cartItemId = req.query.cartItemId;
+    const qty = parseInt(req.query.qty);
+
+    const newQty = qty + 1;
 
     try{
-        const response = await fetch(`http://localhost:4000/api/cart/item/${cartItemId}`, {
+        await fetch(`http://localhost:4000/api/cart/item/${cartItemId}`, {
             method: "PUT",
             headers: {
                 "Content-Type":"application/json"
             },
             body: JSON.stringify({
-                quantity: 1
+                quantity: newQty
             })
         });
+
+        res.redirect("/product-cart");
     }
     catch(e){
-
+        console.log(e);
+        res.redirect("/product-cart");
     }
+});
 
-})
+app.get("/decrease-qty", async (req, res) => {
+    const cartItemId = req.query.cartItemId;
+    const qty = parseInt(req.query.qty);
+
+    const newQty = qty - 1;
+
+    try{
+        if(newQty <= 0){
+            await fetch(`http://localhost:4000/api/cart/item/${cartItemId}`, {
+                method: "DELETE"
+            });
+        } else {
+            await fetch(`http://localhost:4000/api/cart/item/${cartItemId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type":"application/json"
+                },
+                body: JSON.stringify({
+                    quantity: newQty
+                })
+            });
+        }
+
+        res.redirect("/product-cart");
+    }
+    catch(e){
+        console.log(e);
+        res.redirect("/product-cart");
+    }
+});
 
 app.get("/product-detail", async (req, res) =>{
     const id = req.query.id;
