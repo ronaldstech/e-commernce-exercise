@@ -1,14 +1,20 @@
 const express = require('express');
 const session = require("express-session");
 const app = express();
+const FileStore = require("session-file-store")(session);
 
 app.use(session({
-    secret: "1234",  
+    store: new FileStore({
+        path: "./sessions"
+    }),
+    secret: "1234",
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: false,
-        maxAge: 1000 * 60 * 60 * 6
+        maxAge: 1000 * 60 * 60 * 6,
+        httpOnly: true,
+        sameSite: "lax",
+        secure: false
     }
 }));
 
@@ -24,6 +30,7 @@ app.get("/login", (req, res) =>{
     res.render("login", {error: null});
 })
 
+//rendering home
 app.get("/home", async (req, res) => {
     if(!req.session.user){
         return res.redirect("/login");
@@ -42,6 +49,7 @@ app.get("/home", async (req, res) => {
     }
 })
 
+//adding item to cart
 app.get("/add-cart", async (req, res) =>{
     if (!req.session.user) {
         return res.redirect("/login");
@@ -88,6 +96,7 @@ app.get("/add-cart", async (req, res) =>{
     }
 })
 
+//logging in
 app.post("/login", async (req, res) =>{
     const {username, password} = req.body;
     try{
@@ -112,6 +121,7 @@ app.post("/login", async (req, res) =>{
 
 });
 
+//rendering product cart
 app.get("/product-cart", async(req, res) =>{
     if(!req.session.user){
         res.redirect("/login");
@@ -121,11 +131,62 @@ app.get("/product-cart", async(req, res) =>{
     try{
         const response = await fetch(`http://localhost:4000/api/cart/user/${userId}`);
         const cart = await response.json();
-        res.render("product-cart", {cart});
+
+        const productRes = await fetch("http://localhost:4000/api/products");
+        const products = await productRes.json();
+
+        const productMap = {};
+        products.forEach(p => {
+            productMap[p.id] = p;
+        })
+
+        const enrichedCart = cart.map(item =>({
+            ...item, product: productMap[item.productId] || null
+        }))
+
+
+        res.render("product-cart", {enrichedCart});
     }
     catch(e){
         console.log(e);
     }
+})
+
+//removing item from cartId
+app.get("/remove-item", async (req, res) =>{
+    const cartItemId = req.query.cartItemId;
+
+    try{
+        const response = await fetch(`http://localhost:4000/api/cart/item/${cartItemId}`);
+        const data = await response.json();
+        if(response.ok){
+            res.redirect("product-cart");
+        }
+    }
+    catch(e){
+        console.log(e);
+    }
+});
+
+//increamenting quantity
+app.get("/increase-qty", async (req, res) => {
+    const cartItemId = req.query.cartItemId;
+
+    try{
+        const response = await fetch(`http://localhost:4000/api/cart/item/${cartItemId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type":"application/json"
+            },
+            body: JSON.stringify({
+                quantity: 1
+            })
+        });
+    }
+    catch(e){
+
+    }
+
 })
 
 app.get("/product-detail", async (req, res) =>{
