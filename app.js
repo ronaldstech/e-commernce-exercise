@@ -231,28 +231,20 @@ app.get("/orders", async (req, res) => {
 
     try {
         // 1. Fetch orders
-        const response = await fetch(`http://localhost:4000/api/orders/user/${userId}`);
+        const response = await fetch(`http://localhost:4000/api/orders`);
         const orders = await response.json();
 
-        // 2. Fetch items for each order
-        const ordersWithItems = await fetchOrderItems(orders);
+        const usersRes = await fetch("http://localhost:4000/api/users");
+        const users = await usersRes.json();
 
-        // 3. Fetch products (for enrichment)
-        const productRes = await fetch("http://localhost:4000/api/products");
-        const products = await productRes.json();
-
-        const productMap = {};
-        products.forEach(p => {
-            productMap[p.id] = p;
+        const userMap = {};
+        users.forEach(u => {
+            userMap[u.id] = u;
         });
 
-        // 4. Enrich order items with product data
-        const enrichedOrders = ordersWithItems.map(order => ({
+        const enrichedOrders = orders.map(order => ({
             ...order,
-            items: order.items.map(item => ({
-                ...item,
-                product: productMap[item.productId] || null
-            }))
+            user: userMap[order.userId] || null
         }));
 
         const total = orders.reduce((sum, o)=> {
@@ -265,6 +257,21 @@ app.get("/orders", async (req, res) => {
         console.log(e);
         res.render("orders", { orders: [] });
     }
+});
+
+//logout
+app.get("/logout", (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.log(err);
+            return res.redirect("/home");
+        }
+
+        // clear session cookie
+        res.clearCookie("connect.sid");
+
+        res.redirect("/login");
+    });
 });
 
 //removing item from cartId

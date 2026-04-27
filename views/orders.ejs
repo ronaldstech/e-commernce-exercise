@@ -50,6 +50,10 @@
         .figure span{
             color: blue;
         }
+        td{
+            padding:8px; 
+            border:1px solid #ddd;
+        }
     </style>
 </head>
 <body>
@@ -73,9 +77,9 @@
             <tbody>
                 <% orders.forEach(order => { %>
                     <tr>
-                        <td style="padding:8px; border:1px solid #ddd;"><%= order.id %></td>
-                        <td style="padding:8px; border:1px solid #ddd;"><%= user?.username || '' %></td>
-                        <td style="padding:8px; border:1px solid #ddd;"><%= user?.email || '' %></td>
+                        <td><%= order.id %></td>
+                        <td><%= order.user?.username || order.username || '' %></td>
+                        <td><%= order.user?.email || '' %></td>
                         <td style="padding:8px; border:1px solid #ddd; color:blue; font-weight:bold;">$
                             <%= order.total.toFixed(2) %>
                         </td>
