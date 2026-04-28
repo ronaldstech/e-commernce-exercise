@@ -72,7 +72,7 @@ app.get("/home", async (req, res) => {
         const categories = await catRes.json();
         let products = await prodRes.json();
 
-        // ✅ only filter if categoryId exists
+        //only filter if categoryId exists
         if (categoryId && categoryId !== "all") {
             products = products.filter(p => p.categoryId == categoryId);
         }
